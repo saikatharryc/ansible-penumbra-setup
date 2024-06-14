@@ -1,0 +1,98 @@
+---
+
+- name: Create Folder /testdata if not exist
+  file:
+    path: /testdata
+    mode: 0755
+    state: directory
+
+- name: Init container build
+  ansible.builtin.shell: docker build -t ghcr.io/penumbra-zone/penumbra-init:v0.77.2 .
+  args:
+    chdir: /pz
+
+- name: Run Penumbra init container
+  community.general.docker_container:
+    name: "{{ init_container_name }}"
+    user: 0
+    image: ghcr.io/penumbra-zone/penumbra-init:v0.77.2
+    state: started
+    restart_policy: on-failure
+    image_name_mismatch: recreate
+    keep_volumes: true
+    env:
+      STATEFULSET_ORDINAL: "{{ node_index }}"
+      MONIKER: "{{ moniker }}"
+      PUBLIC_IP: "{{ public_ip }}"
+      COMETBFT_CONFIG_P2P_MAX_NUM_INBOUND_PEERS: "300"
+      COMETBFT_CONFIG_P2P_MAX_NUM_OUTBOUND_PEERS: "200"
+      COMETBFT_POSTGRES_CONNECTION_URL: "{{ postgres_connection_url }}"
+      PENUMBRA_PCLI_HOME: /penumbra-config/pcli
+      WALLET_PHRASE: "{{ penumbra_wallet_phrase_secret }}"
+      PENUMBRA_COMETBFT_INDEXER: "psql"
+      PENUMBRA_BOOTSTRAP_URL: "{{ penumbra_bootstrap_node_cometbft_rpc_url }}"
+      PENUMBRA_PD_ARCHIVE_URL: "{{ penumbra_snapshot_url }}"
+      ENABLE_VALIDATOR: "{{ enable_validator }}"
+      DELGATION_AMOUNT: "{{ self_delegation_amount }}"
+      DELEGATE_NOW: "{{ delegate_now }}"
+    volumes:
+      - /testdata:/penumbra-config
+    networks:
+      - name: "{{ network_name }}"
+
+- name: Wait for init container to finish
+  community.docker.docker_container_info:
+    name: "{{ init_container_name }}"
+  register: init_container
+  until: init_container.container.State.Status == 'exited'
+  retries: 100
+  delay: 10
+
+- name: Run Penumbra container
+  community.general.docker_container:
+    name: penumbra_container
+    user: "1000"
+    image: ghcr.io/penumbra-zone/penumbra:v0.77.2
+    state: started
+    default_host_ip: "0.0.0.0"
+    restart_policy: on-failure
+    image_name_mismatch: recreate
+    keep_volumes: true
+    command:
+      [
+        "/usr/bin/pd",
+        "start",
+        "--enable-expensive-rpc",
+      ]
+    volumes:
+      - /testdata:/penumbra-config
+    env:
+      PENUMBRA_PD_HOME: /penumbra-config/testnet_data/node0/pd
+      PENUMBRA_PD_COMETBFT_PROXY_URL: http://cometbft_container:26657
+      PENUMBRA_PD_ABCI_BIND: 0.0.0.0:26658
+      PENUMBRA_PD_METRICS_BIND: 0.0.0.0:9000
+      PENUMBRA_PD_GRPC_BIND: 0.0.0.0:8080
+      # RUST_LOG: "info,pd=debug,penumbra=debug,jmt=debug"
+      RUST_LOG: "info"
+      RUST_BACKTRACE: 'full'
+      PENUMBRA_PCLI_HOME: /penumbra-config/pcli
+      PENUMBRA_BOOTSTRAP_URL: "{{ penumbra_bootstrap_node_cometbft_rpc_url }}"
+      PENUMBRA_PD_ARCHIVE_URL: "{{ penumbra_snapshot_url }}"
+      PENUMBRA_COMETBFT_INDEXER: "psql"
+      COMETBFT_CONFIG_P2P_MAX_NUM_INBOUND_PEERS: "300"
+      COMETBFT_CONFIG_P2P_MAX_NUM_OUTBOUND_PEERS: "200"
+      COMETBFT_POSTGRES_CONNECTION_URL: "{{ postgres_connection_url }}"
+    networks:
+      - name: "{{ network_name }}"
+    ports:
+      - 0.0.0.0:8080:8080
+      - 0.0.0.0:9000:9000
+      - 0.0.0.0:26658:26658
+
+- name: Wait for penumbra to start
+  ansible.builtin.wait_for:
+    port: 8080
+    delay: 5
+  when: postgres_container.changed
+  retries: 4
+  delay: 10

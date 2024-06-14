@@ -1,0 +1,41 @@
+---
+- name: Ensure destination directory exists
+  ansible.builtin.file:
+    path: /pz
+    state: directory
+    mode: "0777"
+
+- name: Ensure destination directory exists
+  ansible.builtin.file:
+    path: /opt/cometbft
+    state: directory
+    mode: "0777"
+
+- name: Copy Dockerfile template to target machine
+  ansible.builtin.copy:
+    src: ../../scripts/Dockerfile
+    dest: /pz
+
+- name: Copy pd-init.sh script to target machine
+  ansible.builtin.copy:
+    src: ../../scripts/pd-init.sh
+    dest: /pz
+    mode: 0755  # Ensure the script has executable permissions
+
+- name: Copy init-volume.sh script to target machine
+  ansible.builtin.copy:
+    src: ../../scripts/init-volume.sh
+    dest: /pz
+    mode: 0755  # Ensure the script has executable permissions
+
+- name: Copy node.json to target machine
+  ansible.builtin.copy:
+    src: ../../scripts/nodes.json
+    dest: /pz
+    mode: 0755  # Ensure the script has executable permissions
+
+
+- name: Copy SQL file in target machine
+  ansible.builtin.copy:
+    src: ../../scripts/cometbft-schema.sql
+    dest: /opt/cometbft

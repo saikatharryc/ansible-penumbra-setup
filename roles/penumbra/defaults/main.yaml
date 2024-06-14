@@ -1,0 +1,8 @@
+---
+init_container_name: "penumbra_init_container_{{ ansible_date_time.iso8601_basic }}"
+penumbra_snapshot_url: "https://snapshots.penumbra.zone/testnet/pd-migrated-state-76-77.tar.gz"
+penumbra_bootstrap_node_cometbft_rpc_url: "https://rpc.testnet.penumbra.zone"
+postgres_connection_url: "postgresql://{{postgres_user}}:{{postgres_password}}@{{postgres_container_name}}:{{postgres_port}}/{{postgres_database}}?sslmode=disable"
+enable_validator: "false"
+self_delegation_amount: "1" #can be float
+delegate_now: "false" #can be true only when validator enabled
