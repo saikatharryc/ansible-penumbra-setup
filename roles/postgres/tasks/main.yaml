@@ -8,7 +8,7 @@
 - name: Create data container
   community.general.docker_container:
     name: "{{ postgres_container_name }}-data"
-    image: "ghcr.io/cloudnative-pg/postgresql:13.15-1-bookworm"
+    image: ghcr.io/cloudnative-pg/postgresql:13.15-1-bookworm
     state: present
 
 - name: Run PostgreSQL container
@@ -37,9 +37,9 @@
 
 - name: Run queries from SQL script
   community.postgresql.postgresql_script:
-    host: "localhost"
-    port: "{{postgres_port}}"
-    login_user: "{{postgres_user}}"
-    login_password: "{{postgres_password}}"
-    db: "{{postgres_database}}"
+    host: localhost
+    port: "{{ postgres_port }}"
+    login_user: "{{ postgres_user }}"
+    login_password: "{{ postgres_password }}"
+    db: "{{ postgres_database }}"
     path: /opt/cometbft/cometbft-schema.sql

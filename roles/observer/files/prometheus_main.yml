@@ -1,3 +1,4 @@
+---
 global:
   scrape_interval: 15s
 
@@ -5,31 +6,31 @@ scrape_configs:
   - job_name: prometheus
     scrape_interval: 30s
     static_configs:
-    - targets: ["localhost:9090"]
+      - targets: [localhost:9090]
 
   - job_name: node-exporter
     scrape_interval: 30s
     static_configs:
-    - targets: ["37.27.82.124:9100", "95.217.214.240:9100"]
+      - targets: [37.27.82.124:9100, 95.217.214.240:9100]
 
   - job_name: cadvisor
     scrape_interval: 30s
     static_configs:
-    - targets: ["37.27.82.124:9101", "95.217.214.240:9101"]
+      - targets: [37.27.82.124:9101, 95.217.214.240:9101]
 
-  - job_name: 'Tendermint Node'
+  - job_name: Tendermint Node
     scrape_interval: 10s
     scheme: http
     metrics_path: metrics
     static_configs:
       # Using localhost for scrape targets requires `--network=host` on container run args.
-      - targets: ['95.217.214.240:26660']
-  - job_name: 'Penumbra Daemon'
+      - targets: [95.217.214.240:26660]
+  - job_name: Penumbra Daemon
     scrape_interval: 10s
     scheme: http
     metrics_path: metrics
     static_configs:
-      - targets: ['95.217.214.240:9000']
+      - targets: [95.217.214.240:9000]
 
 rule_files:
   - prometheus_alerts_rules.yml
@@ -37,5 +38,5 @@ rule_files:
 alerting:
   alertmanagers:
     - static_configs:
-      - targets:
-        - alertmanager:9093
+        - targets:
+            - alertmanager:9093

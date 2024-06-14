@@ -20,20 +20,19 @@
   ansible.builtin.copy:
     src: ../../scripts/pd-init.sh
     dest: /pz
-    mode: 0755  # Ensure the script has executable permissions
+    mode: "0755" # Ensure the script has executable permissions
 
 - name: Copy init-volume.sh script to target machine
   ansible.builtin.copy:
     src: ../../scripts/init-volume.sh
     dest: /pz
-    mode: 0755  # Ensure the script has executable permissions
+    mode: "0755" # Ensure the script has executable permissions
 
 - name: Copy node.json to target machine
   ansible.builtin.copy:
     src: ../../scripts/nodes.json
     dest: /pz
-    mode: 0755  # Ensure the script has executable permissions
-
+    mode: "0755" # Ensure the script has executable permissions
 
 - name: Copy SQL file in target machine
   ansible.builtin.copy:

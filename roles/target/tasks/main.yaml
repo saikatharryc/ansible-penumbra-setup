@@ -14,7 +14,7 @@
       --path.sysfs=/host/sys
       --collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)
     ports:
-      - "9100:9100"
+      - 9100:9100
 
 - name: Create cAdvisor
   community.general.docker_container:
@@ -31,4 +31,4 @@
     devices:
       - /dev/kmsg
     ports:
-      - "9101:8080"
+      - 9101:8080

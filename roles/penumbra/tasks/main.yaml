@@ -1,9 +1,8 @@
 ---
-
 - name: Create Folder /testdata if not exist
-  file:
+  ansible.builtin.file:
     path: /testdata
-    mode: 0755
+    mode: "0755"
     state: directory
 
 - name: Init container build
@@ -29,7 +28,7 @@
       COMETBFT_POSTGRES_CONNECTION_URL: "{{ postgres_connection_url }}"
       PENUMBRA_PCLI_HOME: /penumbra-config/pcli
       WALLET_PHRASE: "{{ penumbra_wallet_phrase_secret }}"
-      PENUMBRA_COMETBFT_INDEXER: "psql"
+      PENUMBRA_COMETBFT_INDEXER: psql
       PENUMBRA_BOOTSTRAP_URL: "{{ penumbra_bootstrap_node_cometbft_rpc_url }}"
       PENUMBRA_PD_ARCHIVE_URL: "{{ penumbra_snapshot_url }}"
       ENABLE_VALIDATOR: "{{ enable_validator }}"
@@ -54,16 +53,11 @@
     user: "1000"
     image: ghcr.io/penumbra-zone/penumbra:v0.77.2
     state: started
-    default_host_ip: "0.0.0.0"
+    default_host_ip: 0.0.0.0
     restart_policy: on-failure
     image_name_mismatch: recreate
     keep_volumes: true
-    command:
-      [
-        "/usr/bin/pd",
-        "start",
-        "--enable-expensive-rpc",
-      ]
+    command: [/usr/bin/pd, start, --enable-expensive-rpc]
     volumes:
       - /testdata:/penumbra-config
     env:
@@ -73,12 +67,12 @@
       PENUMBRA_PD_METRICS_BIND: 0.0.0.0:9000
       PENUMBRA_PD_GRPC_BIND: 0.0.0.0:8080
       # RUST_LOG: "info,pd=debug,penumbra=debug,jmt=debug"
-      RUST_LOG: "info"
-      RUST_BACKTRACE: 'full'
+      RUST_LOG: info
+      RUST_BACKTRACE: full
       PENUMBRA_PCLI_HOME: /penumbra-config/pcli
       PENUMBRA_BOOTSTRAP_URL: "{{ penumbra_bootstrap_node_cometbft_rpc_url }}"
       PENUMBRA_PD_ARCHIVE_URL: "{{ penumbra_snapshot_url }}"
-      PENUMBRA_COMETBFT_INDEXER: "psql"
+      PENUMBRA_COMETBFT_INDEXER: psql
       COMETBFT_CONFIG_P2P_MAX_NUM_INBOUND_PEERS: "300"
       COMETBFT_CONFIG_P2P_MAX_NUM_OUTBOUND_PEERS: "200"
       COMETBFT_POSTGRES_CONNECTION_URL: "{{ postgres_connection_url }}"

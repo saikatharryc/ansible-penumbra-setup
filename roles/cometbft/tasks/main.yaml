@@ -3,19 +3,19 @@
   community.general.docker_container:
     user: 100
     name: cometbft_container
-    default_host_ip: "0.0.0.0"
+    default_host_ip: 0.0.0.0
     image: ghcr.io/saikatharryc/cometbft/cometbft:v0.37.5-3
     image_name_mismatch: recreate
     state: started
     restart_policy: on-failure
-    command: ["start", "--proxy_app", "penumbra_container:26658", "--moniker", "saikat"]
+    command: [start, --proxy_app, penumbra_container:26658, --moniker, saikat]
     keep_volumes: true
     env:
       ID: "{{ node_index }}"
       CHAIN_ID: penumbra-testnet-deimos-8
-      CMTHOME: "/cometbft/testnet_data/node0/cometbft"
-      MONIKER: "{{moniker}}"
-      PROXY_APP: "penumbra_container:26658"
+      CMTHOME: /cometbft/testnet_data/node0/cometbft
+      MONIKER: "{{ moniker }}"
+      PROXY_APP: penumbra_container:26658
     volumes:
       - /testdata:/cometbft
     networks:
