@@ -5,7 +5,8 @@
     name: cometbft_container
     default_host_ip: 0.0.0.0
     image: ghcr.io/saikatharryc/cometbft/cometbft:v0.37.5-3
-    image_name_mismatch: recreate
+    comparisons:
+      '*': strict
     state: started
     restart_policy: on-failure
     command: [start, --proxy_app, penumbra_container:26658, --moniker, saikat]
@@ -20,7 +21,7 @@
       - /testdata:/cometbft
     networks:
       - name: "{{ network_name }}"
-    ports:
-      - 0.0.0.0:26656:26656
-      - 0.0.0.0:26657:26657
+    published_ports:
+      # - 0.0.0.0:26656:26656
+      # - 0.0.0.0:26657:26657
       - 0.0.0.0:26660:26660 #for metrics

@@ -6,8 +6,8 @@ route:
 receivers:
   - name: "mail"
     email_configs:
-      - smarthost: "outlook.office365.com:587"
-        auth_username: "test@padok.fr"
+      - smarthost: "{{ alertmanager_smtp_host }}"
+        auth_username: "{{ alertmanager_smtp_user }}"
         auth_password: "{{ alertmanager_smtp_password }}"
-        from: "test@padok.fr"
-        to: "test@padok.fr"
+        from: "{{ alertmanager_smtp_from_email }}"
+        to: "{{ alertmanager_smtp_to_email }}"

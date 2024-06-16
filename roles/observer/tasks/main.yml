@@ -44,7 +44,8 @@
 - name: Create Prometheus container
   community.general.docker_container:
     name: prometheus
-    image_name_mismatch: recreate
+    comparisons:
+      '*': strict
     restart_policy: always
     image: prom/prometheus:{{ prometheus_version }}
     volumes:
@@ -64,7 +65,8 @@
 - name: Create Grafana container
   community.general.docker_container:
     name: grafana
-    image_name_mismatch: recreate
+    comparisons:
+      '*': strict
     restart_policy: always
     image: grafana/grafana:{{ grafana_version }}
     volumes:
@@ -76,13 +78,14 @@
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
     networks:
       - name: "{{ network_name }}"
-    ports:
+    published_ports:
       - 3000:3000
 
 - name: Create Alertmanager container
   community.general.docker_container:
     name: alertmanager
-    image_name_mismatch: recreate
+    comparisons:
+      '*': strict
     restart_policy: always
     image: prom/alertmanager:{{ alertmanager_version }}
     volumes:
@@ -91,5 +94,5 @@
     command: --config.file=/config/alertmanager.yml  --log.level=debug
     networks:
       - name: "{{ network_name }}"
-    ports:
+    published_ports:
       - 9093:9093

@@ -23,7 +23,7 @@
       POSTGRES_USER: "{{ postgres_user }}"
     volumes_from:
       - "{{ postgres_container_name }}-data"
-    ports:
+    published_ports:
       - "{{ postgres_port }}:{{ postgres_port }}"
     networks:
       - name: "{{ network_name }}"
