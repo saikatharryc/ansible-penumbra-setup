@@ -10,7 +10,7 @@
     - [Monitoring](#monitoring---steps--details)
 - [Usage](#usage)
 - [Improvements](#improvements)
-
+- [References](#references)
 
 ## Introduction
 We are trying to setup a fullnode for [penumbra](guide.penumbra.zone) to aim to make it function as validator.
@@ -123,3 +123,8 @@ ansible-playbook -i inventory/penumbra.yaml playbooks/run-penumbra.yaml --ask-va
 * Take backups every 4 hours or so, depending on the activity for the data directory of the cometbft.
 * Consider backing up the config files with secrets to vault where versioning supports to have them handy if necessery.
 * Have more option to perform `pd` cli base commands in ansible with init-container based approach to perform logical migrations.
+
+#### References
+* https://github.com/cometbft/cometbft/blob/main/DOCKER/Dockerfile
+* https://guide.penumbra.zone/node/pd.html
+* https://github.com/penumbra-zone/penumbra/tree/main/deployments
