@@ -2,13 +2,9 @@
 penumbra:
   children:
     monitoring_3:
-      hosts:
-        37.27.82.124:
-          ansible_user: root
+      hosts: {}
     fullnode_3:
-      hosts:
-        95.217.214.240:
-          ansible_user: root
+      hosts: {}
     personal:
       hosts:
         10.14.232.59:
